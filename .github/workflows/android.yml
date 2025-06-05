@@ -7,17 +7,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4     
 
     - name: Build debug APK inside Docker
       run: |
-        docker run --rm -v "$PWD":/app \
-          -e BUILD_TYPE=debug \
+        docker run --rm \
+          -v "${{ github.workspace }}":/app -w /app \
           ghcr.io/kivy/buildozer:latest \
-          buildozer android debug
+          android debug              
 
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4   
       with:
         name: flappy-debug-apk
         path: bin/*-debug*.apk
