@@ -1,4 +1,5 @@
-name: Build APK
+name: Build APK (Docker)
+
 on: [push, workflow_dispatch]
 
 jobs:
@@ -8,27 +9,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install host build packages
+    - name: Build debug APK inside Docker
       run: |
-        sudo apt-get update -y
-        sudo apt-get install -y \
-          build-essential autoconf automake libtool libtool-bin \
-          pkg-config m4 gettext unzip openjdk-17-jdk
+        docker run --rm -v "$PWD":/app \
+          -e BUILD_TYPE=debug \
+          ghcr.io/kivy/buildozer:latest \
+          buildozer android debug
 
-    - name: Install buildozer & deps
-      run: |
-        python -m pip install -U pip
-        pip install buildozer==1.5.0 "kivy[base]==2.3.1" \
-                   pymunk pillow cython==0.29.36
-
-    - name: Build debug APK
-      run: buildozer -v android debug
-
-    - uses: actions/upload-artifact@v4
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
       with:
         name: flappy-debug-apk
         path: bin/*-debug*.apk
