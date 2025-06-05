@@ -1,0 +1,28 @@
+name: Build APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with: {python-version: '3.11'}
+
+    - name: Install buildozer & deps
+      run: |
+        python -m pip install -U pip
+        pip install "kivy[base]==2.3.1" buildozer pymunk pillow cython==0.29.36
+
+    - name: Accept Android licenses
+      run: |
+        yes | sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk --licenses || true
+
+    - name: Build debug APK
+      run: buildozer -v android debug
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: flappy-debug-apk
+        path: bin/*-debug*.apk
