@@ -5,10 +5,11 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
 
-    - name: Fix workspace perms for container
+    - name: Fix workspace permissions
       run: sudo chown -R 1000:1000 "$GITHUB_WORKSPACE"
 
     - name: Build debug APK inside Docker
@@ -16,7 +17,8 @@ jobs:
         docker run --rm \
           -v "${{ github.workspace }}":/app -w /app \
           ghcr.io/kivy/buildozer:latest \
-          android debug                
+          android debug          
+
 
     - uses: actions/upload-artifact@v4
       with:
