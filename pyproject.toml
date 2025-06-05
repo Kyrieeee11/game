@@ -1,0 +1,12 @@
+[project]
+name = "mini-mobile-game"
+version = "0.1.0"
+description = "A minimal Kivy mobile game"
+authors = [{ name = "jjl", email = "you@example.com" }]
+requires-python = ">=3.9,<3.14"
+
+dependencies = [
+  "kivy[base]==2.3.1",
+  "pymunk>=7.7",
+  "pillow>=10.3"
+]
